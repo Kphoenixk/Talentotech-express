@@ -12,6 +12,23 @@ const express = require('express') // Importando la libreria
 const app = express() // Inicializamos la variable de la libreria
 const port = 3000 // Definimos el puerto a usar
 
+const mongoose = require('mongoose');
+
+
+require('dotenv').config()
+const DB_CONNECTION = process.env.DB_CONNECTION || ''
+mongoose.connect(DB_CONNECTION)
+
+
+app.use (express.urlencoded({extended:true}))
+app.use (express.json())
+const UserRoutes = require('./routes/UserRoutes')
+app.use('/', UserRoutes)
+
+
+
+
+
 // Creando el servicio web
 // Funcionalidad de nuestra API
 // [get, post, put, patch, delete]
