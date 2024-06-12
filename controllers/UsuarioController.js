@@ -1,4 +1,7 @@
 const UserSchema = require("../models/usuario")
+const bcrypt= require('bcrypt')
+
+
 
 class UsuarioController{
 
@@ -9,18 +12,25 @@ class UsuarioController{
     }
     
     async createUsuario (req, res) {
+
+        const hashedPassword= await bcrypt.hash(req.body.password, 10)
+
+
         var nuevoUsuario = {
             nombre: req.body.nombre,
             apellidos: req.body.apellidos,
             correo: req.body.correo,
-            password: req.body.password,
+            password: hashedPassword,
         }
         
-   await UserSchema(nuevoUsuario).save();
+   await UserSchema(nuevoUsuario).save().then((result) =>{ 
+    res.send({"status": "success", "message": "Usuario Guardado Correctamente"})
+}).catch((error) => {
+    res.send({"status": "error", "message": error.message})
+})
 
-   res.send("Guardado correctamente")
+}
 
-    }
 
     async getUsuarioById(req, res){
         var id= req.params.id
@@ -41,10 +51,14 @@ class UsuarioController{
         }
 
        await UserSchema.findByIdAndUpdate(id, updateUser,{ new: true })
-
-       res.json({"status": "success", "message": "Usuario Actualizado correctamente"})
-
+       .then((result) => { 
+        res.send({"status": "success", "message": "Usuario Actualizado Correctamente"})
+    }).catch((error) => {
+        res.send({"status": "error", "message": error.message})
+    })
+    
     }
+
 
     async deleteUsuario(req, res){
         var id= req.params.id
