@@ -92,10 +92,12 @@ class UsuarioController{
 
             })
         }else{
-            res.send({"status": "error", "message": " Datos invalidos"})
+           res.status(401).send({"status": "error", "message": " Datos invalidos"})
+           
+
         }
     }else{
-        res.send({"status": "error", "message": "El correo ingresado no existe"})
+        res.status(401).send({"status": "error", "message": "El correo ingresado no existe"})
     }
   }
 }
