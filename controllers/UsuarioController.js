@@ -1,5 +1,6 @@
 const UserSchema = require("../models/usuario")
 const bcrypt= require('bcrypt')
+const jwt= require('jsonwebtoken')
 
 
 
@@ -42,12 +43,13 @@ class UsuarioController{
       async updateUsuario(req, res){
 
         var id = req.params.id;
+        const hashedPassword= await bcrypt.hash(req.body.password, 10)
 
         var updateUser ={
             nombre: req.body.nombre,
             apellidos: req.body.apellidos,
             correo: req.body.correo,
-            password: req.body.password,
+            password: hashedPassword,
         }
 
        await UserSchema.findByIdAndUpdate(id, updateUser,{ new: true })
@@ -69,6 +71,33 @@ class UsuarioController{
     }
 
 
+ async login(req, res){
+    var correo = req.body.correo;
+    var password = req.body.password
+
+    var usuario = await UserSchema.findOne({correo})
+    if(usuario){
+
+        var verificacionClave = await bcrypt.compare(password, usuario.password)
+        if(verificacionClave){
+
+            usuario.password = null
+            const token = jwt.sign({usuario}, 'secret', { expiresIn: '1h'})
+
+
+            res.send ({"status": "success", 
+                "message": "Bienvenido" + usuario.nombre + " " + usuario.apellidos,
+                "user_id": usuario._id,
+                "token": token
+
+            })
+        }else{
+            res.send({"status": "error", "message": " Datos invalidos"})
+        }
+    }else{
+        res.send({"status": "error", "message": "El correo ingresado no existe"})
+    }
+  }
 }
 
 module.exports = UsuarioController

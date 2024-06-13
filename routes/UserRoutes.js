@@ -12,6 +12,7 @@ app.post('/usuario',controller.createUsuario)
 app.get('/usuario/:id',controller.getUsuarioById)
 app.put('/usuario/:id',controller.updateUsuario)
 app.delete('/usuario/:id',controller.deleteUsuario)
+app.post('/login', controller.login)
 
 module.exports = app
     
