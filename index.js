@@ -19,11 +19,18 @@ require('dotenv').config()
 const DB_CONNECTION = process.env.DB_CONNECTION || ''
 mongoose.connect(DB_CONNECTION)
 
+const cors = require('cors')
+app.use(cors());
+
 
 app.use (express.urlencoded({extended:true}))
 app.use (express.json())
 const UserRoutes = require('./routes/UserRoutes')
 app.use('/', UserRoutes)
+
+const CarroRoutes = require('./routes/CarroRoutes')
+app.use('/', CarroRoutes)
+
 
 
 
